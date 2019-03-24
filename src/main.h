@@ -1,0 +1,8 @@
+#ifndef MAIN_H_INCLUDED
+#define MAIN_H_INCLUDED
+
+#include <iostream>
+#include <memory>
+#include <SFML/Graphics.hpp>
+
+#endif // MAIN_H_INCLUDED
