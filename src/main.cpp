@@ -48,6 +48,8 @@ int main(){
         r.placeItem();
         r.draw();
 
+        Control c(sf::Mouse::Right);
+
         p.draw();
         p.control(r.getCurrentRoom());
 

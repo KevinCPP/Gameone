@@ -3,8 +3,8 @@
 #include "Materials.h"
 #include "Tile.h"
 
-
 #include <cmath>
+#include <string>
 #include <sstream>
 #include <algorithm>
 
@@ -20,7 +20,9 @@ Player::Player(int maxhp, int maxsp, sf::Vector2f position){
     SP = maxsp;
 
     menuOpen = false;
-    MenuControl.setButton(sf::Keyboard::E);
+    openMenu.setButton(sf::Keyboard::E);
+    menuCursorDown.setButton(sf::Keyboard::Down);
+    menuCursorUp.setButton(sf::Keyboard::Up);
 
     player.setFillColor(sf::Color::Red);
     player.setSize(sf::Vector2f(40 , 40));
@@ -28,7 +30,7 @@ Player::Player(int maxhp, int maxsp, sf::Vector2f position){
 
 void Player::control(Room* r){
 
-    if(MenuControl.pollKey())
+    if(openMenu.pollKey())
         menuOpen = !menuOpen;
 
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
@@ -75,19 +77,56 @@ void Player::control(Room* r){
 }
 
 void Player::menu(){
-    sf::Text t;
-    t.setCharacterSize(18);
-    t.setFont(*Engine::gpFont);
-    t.setFillColor(sf::Color::Magenta);
-    t.setOutlineColor(sf::Color::Black);
-    t.setOutlineThickness(1);
 
-    t.setPosition(300, 150);
+    int weaponY = 150;
+    int usableY = 150;
+    int collectibleY = 150;
+    int moneyY = 150;
 
     for(auto &i : ItemsList){
-        t.setString(i.first + "\tx" + std::to_string(i.second));
-        Engine::gpWindow->draw(t);
+        Item* itm = Materials::getItemFromName(i.first);
+
+        std::wstring wideName = std::wstring(i.first.begin(), i.first.end());
+
+        int indBtn = ItemButtonsTextSearch(wideName);
+
+        std::cout << indBtn;
+
+        switch(itm->getType()){
+            case Item::Weapon:
+                weaponY += 20;
+                itemButtons.at(indBtn).setPosition(100, weaponY);
+                break;
+            case Item::Usable:
+                usableY += 20;
+                itemButtons.at(indBtn).setPosition(375, usableY);
+                break;
+            case Item::Collectible:
+                collectibleY += 20;
+                itemButtons.at(indBtn).setPosition(650, collectibleY);
+                break;
+            case Item::Money:
+                moneyY += 20;
+                itemButtons.at(indBtn).setPosition(925, moneyY);
+                break;
+        }
+
+        //minGW has a bug where std::to_wstring does not work? fix:
+        std::string s = std::to_string(i.second);
+        std::wstring ws = std::wstring(s.begin(), s.end());
+
+        itemButtons.at(indBtn).setText((wideName + L"\tx" + ws).c_str());
+        itemButtons.at(indBtn).draw();
+        itemButtons.at(indBtn).setText(wideName.c_str());
     }
+}
+
+int Player::ItemButtonsTextSearch(const std::wstring& text){
+    for(int i = 0; i < itemButtons.size(); i++){
+        if(itemButtons.at(i).getText() == text)
+            return i;
+    }
+    return -1;
 }
 
 bool Player::testCollision(Room* r){
@@ -116,6 +155,16 @@ bool Player::checkForItems(Room* r){
             ItemsList.at(Materials::itemNames[itemID]) += 1;
         } else {
             ItemsList.insert(std::make_pair(Materials::itemNames[itemID], 1));
+
+            std::wstring wname;
+            wname = std::wstring(Materials::itemNames[itemID].begin(),
+                                 Materials::itemNames[itemID].end() );
+
+            itemButtons.push_back( TextButton(sf::Vector2f(0, 0),
+                                              sf::Color::Magenta,
+                                              sf::Color::White,
+                                              wname.c_str(),
+                                              18) );
         }
 
         return true;

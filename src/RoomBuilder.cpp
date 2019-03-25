@@ -1,6 +1,7 @@
 #include "RoomBuilder.h"
 #include "Materials.h"
 #include "Engine.h"
+#include "Controls.h"
 #include <string>
 #include <iostream>
 
@@ -24,6 +25,8 @@ RoomBuilder::RoomBuilder(){
     currentBlock = 0;
     currentItem = 0;
     currentRoomIndex = 0;
+
+    c.setButton(sf::Mouse::Right);
 
     Room r;
     rooms.push_back(r);
@@ -57,7 +60,7 @@ void RoomBuilder::placeBlock(){
 }
 
 void RoomBuilder::placeItem(){
-    if(sf::Mouse::isButtonPressed(sf::Mouse::Right) && !menuVisible){
+    if(c.pollKey() && !menuVisible){
         Item I = *Materials::getItem(currentItem);
         I.setPosition(Engine::getMousePos());
         rooms[currentRoomIndex].addItem(I);

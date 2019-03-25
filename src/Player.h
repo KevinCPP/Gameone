@@ -6,6 +6,7 @@
 
 #include "Room.h"
 #include "RoomBuilder.h"
+#include "TextButton.h"
 #include "Controls.h"
 
 class Player{
@@ -31,9 +32,12 @@ private:
     bool checkForItems(Room* r);
 
     std::vector<int> ItemInventory; //the player's inventory of items.
+    std::vector<TextButton> itemButtons;
     std::map<std::string, int> ItemsList;
 
-    Control MenuControl;
+    Control openMenu;           //control to open the menu
+    Control menuCursorDown;     //control to move the menu's cursor down
+    Control menuCursorUp;       //control to move the menu's cursor up
 public:
     //constructor for the player, initializes maxHP, maxSP, and their position:
     Player(int maxhp, int maxsp, sf::Vector2f position);
@@ -45,9 +49,11 @@ public:
     void control(Room* r);
 
     //getters:
-    int getMoney(); //returns the money variable
-    int getHP();    //returns the HP variable
-    int getSP();    //returns the SP variable
+
+    int ItemButtonsTextSearch(const std::wstring& text);    //returns the index in itemButtons for a TextButton which matches the text parameter
+    int getMoney();                                         //returns the money variable
+    int getHP();                                            //returns the HP variable
+    int getSP();                                            //returns the SP variable
 
     //setters:
     void setMoney(int amount);  //sets the money variable

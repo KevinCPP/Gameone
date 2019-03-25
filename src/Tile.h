@@ -39,7 +39,7 @@ public:
     void setCollision(bool solid);                                  //setter method for tile's collision.
 
     //getter methods:
-    uint32_t  getItemID();  //returns the numeric ID representing the tile.
+    uint32_t  getItemID();       //returns the numeric ID representing the tile.
     bool      isInteractable();  //returns the interactable var.
     bool      hasCollision();    //returns the collision var.
 

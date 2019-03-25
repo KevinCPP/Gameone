@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include "Controls.h"
 #include "Room.h"
 #include "TextButton.h"
 
@@ -27,6 +28,7 @@ private:
     int currentBlock;                    //current block you are placing (changed with tileButtons)
     int currentItem;                     //current item you are placing (changed with itemButtons)
     bool menuVisible;                    //boolean to determine if the menu for changing tiles is visible.
+    Control c;                           //control for the right mouse which can be polled (for placing items)
 public:
 
     RoomBuilder(); //default constructor

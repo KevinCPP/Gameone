@@ -17,6 +17,7 @@ namespace Materials{
 
     Tile* getTile(int i); //returns any tile pointer in the tiles array.
     Item* getItem(int i); //returns any item pointer in the items array.
+    Item* getItemFromName(std::string n); //returns an item pointer from it's name.
 
     //loads all of the different tiles into the tiles array,
     //it initializes their texture, interactibility, collision,
