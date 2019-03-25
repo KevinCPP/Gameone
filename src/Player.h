@@ -11,7 +11,11 @@
 
 class Player{
 private:
-    sf::RectangleShape player;  //rectangle that represents the player (change to sprite later on)
+    sf::Sprite player;          //sprite that represents the player
+    sf::Texture playerTextureR; //texture for the player's sprite facing right
+    sf::Texture playerTextureL; //texture for the player's sprite facing left
+    sf::Texture playerTextureD; //texture for the player's sprite facing down
+    sf::Texture playerTextureU; //texture for the player's sprite facing up
 
     int HP;     //player's Health Points
     int SP;     //player's Special Points
@@ -31,13 +35,28 @@ private:
     bool testCollision(Room* r);
     bool checkForItems(Room* r);
 
-    std::vector<int> ItemInventory; //the player's inventory of items.
-    std::vector<TextButton> itemButtons;
-    std::map<std::string, int> ItemsList;
+    std::vector<int> ItemInventory;         //the player's inventory of items.
+    std::vector<TextButton> itemButtons;    //vector of textbuttons that correspond with each unique item in the player's inventory
+    std::map<std::string, int> ItemsList;   //map that stores each unique item and it's quantity
 
     Control openMenu;           //control to open the menu
     Control menuCursorDown;     //control to move the menu's cursor down
     Control menuCursorUp;       //control to move the menu's cursor up
+
+    void useItem(Item* it);
+    void usableItemAttributes(int id);
+
+    Item* EquipedWeapon;
+
+    //enum to store the player's direction for rotations
+    enum direction {
+        up,
+        down,
+        left,
+        right
+    } currentDirection;
+
+    void setRotation();
 public:
     //constructor for the player, initializes maxHP, maxSP, and their position:
     Player(int maxhp, int maxsp, sf::Vector2f position);

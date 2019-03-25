@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "Materials.h"
 #include "Tile.h"
+#include "Item.h"
 
 #include <cmath>
 #include <string>
@@ -11,6 +12,11 @@
 Player::Player(int maxhp, int maxsp, sf::Vector2f position){
     player.setPosition(position);
     pos = player.getPosition();
+    playerTextureU.loadFromFile("Textures\\playerModelU.png");
+    playerTextureD.loadFromFile("Textures\\playerModelD.png");
+    playerTextureL.loadFromFile("Textures\\playerModelL.png");
+    playerTextureR.loadFromFile("Textures\\playerModelR.png");
+    player.setTexture(playerTextureU);
 
     money = 0;
     speed = 4;
@@ -18,14 +24,12 @@ Player::Player(int maxhp, int maxsp, sf::Vector2f position){
     maxSP = maxsp;
     HP = maxhp;
     SP = maxsp;
+    currentDirection = up;
 
     menuOpen = false;
     openMenu.setButton(sf::Keyboard::E);
     menuCursorDown.setButton(sf::Keyboard::Down);
     menuCursorUp.setButton(sf::Keyboard::Up);
-
-    player.setFillColor(sf::Color::Red);
-    player.setSize(sf::Vector2f(40 , 40));
 }
 
 void Player::control(Room* r){
@@ -36,15 +40,27 @@ void Player::control(Room* r){
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
         pos.y -= speed;
         player.setPosition(pos);
+        currentDirection = up;
 
         if(testCollision(r)){
             pos.y += speed;
             player.setPosition(pos);
         }
     }
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
+        pos.y += speed;
+        player.setPosition(pos);
+        currentDirection = down;
+
+        if(testCollision(r)){
+            pos.y -= speed;
+            player.setPosition(pos);
+        }
+    }
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
         pos.x -= speed;
         player.setPosition(pos);
+        currentDirection = left;
 
         if(testCollision(r)){
             pos.x += speed;
@@ -54,18 +70,10 @@ void Player::control(Room* r){
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
         pos.x += speed;
         player.setPosition(pos);
+        currentDirection = right;
 
         if(testCollision(r)){
             pos.x -= speed;
-            player.setPosition(pos);
-        }
-    }
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
-        pos.y += speed;
-        player.setPosition(pos);
-
-        if(testCollision(r)){
-            pos.y -= speed;
             player.setPosition(pos);
         }
     }
@@ -89,8 +97,6 @@ void Player::menu(){
         std::wstring wideName = std::wstring(i.first.begin(), i.first.end());
 
         int indBtn = ItemButtonsTextSearch(wideName);
-
-        std::cout << indBtn;
 
         switch(itm->getType()){
             case Item::Weapon:
@@ -116,9 +122,45 @@ void Player::menu(){
         std::wstring ws = std::wstring(s.begin(), s.end());
 
         itemButtons.at(indBtn).setText((wideName + L"\tx" + ws).c_str());
+
+        if(itemButtons.at(indBtn).pollClicked()){
+            if(i.second > 0){
+                useItem(itm);
+                i.second--;
+            }
+        }
         itemButtons.at(indBtn).draw();
+
         itemButtons.at(indBtn).setText(wideName.c_str());
     }
+}
+
+void Player::useItem(Item* it){
+    int id = it->getItemID();
+
+    switch(it->getType()){
+    case Item::Weapon:
+        EquipedWeapon = it;
+        break;
+    case Item::Usable:
+        usableItemAttributes(id);
+        break;
+    }
+}
+
+void Player::usableItemAttributes(int id){
+    switch(id){
+    case 1:
+        HP += 100;
+        auto it = std::find(ItemInventory.begin(), ItemInventory.end(), id);
+        if(it != ItemInventory.end())
+            ItemInventory.erase(it);
+    }
+
+    if(HP > maxHP)
+        HP = maxHP;
+    if(SP > maxSP)
+        SP = maxSP;
 }
 
 int Player::ItemButtonsTextSearch(const std::wstring& text){
@@ -195,6 +237,26 @@ void Player::setSP(int sp){
     SP = sp;
 }
 
+void Player::setRotation(){
+    sf::IntRect d(40, 40, -40, -40);
+
+    switch(currentDirection){
+        case up:
+            player.setTexture(playerTextureU);
+            break;
+        case down:
+            player.setTexture(playerTextureD);
+            break;
+        case left:
+            player.setTexture(playerTextureL);
+            break;
+        case right:
+            player.setTexture(playerTextureR);
+            break;
+    }
+}
+
 void Player::draw(){
+    setRotation();
     Engine::gpWindow->draw(player);
 }
