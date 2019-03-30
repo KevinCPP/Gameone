@@ -6,7 +6,7 @@
 namespace Materials{
 
     const int numMaterials = 14; //total number of different tiles in the game
-    const int numItems = 2;
+    const int numItems = 4;
 
     Tile* tiles[numMaterials];   //array to store the different tile
     Item* items[numItems];
@@ -31,16 +31,22 @@ namespace Materials{
 
     const std::string itemNames[numItems] = {
         "Item_Sword",
-        "Ultra_Potion_Of_Healing"
+        "Ultra_Potion_Of_Healing",
+        "Super_Potion_Of_Healing",
+        "Potion_Of_Healing"
     };
 
     const int itemValues[numItems] = {
         50,
-        2000
+        2500,
+        750,
+        100
     };
 
     const Item::Item_Type itemTypes[numItems] = {
         Item::Weapon,
+        Item::Usable,
+        Item::Usable,
         Item::Usable
     };
 

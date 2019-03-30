@@ -75,6 +75,10 @@ void TextButton::setText(const wchar_t* text){
     collision = button.getGlobalBounds();
 }
 
+void TextButton::setWasClicked(bool c){
+    mouseClicked = c;
+}
+
 sf::FloatRect TextButton::getCollision(){
     return collision;
 }
@@ -97,4 +101,8 @@ const sf::Font* TextButton::getFont(){
 
 std::wstring TextButton::getText(){
     return button.getString();
+}
+
+bool TextButton::getWasClicked(){
+    return mouseClicked;
 }

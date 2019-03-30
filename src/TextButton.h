@@ -23,12 +23,14 @@ public:
     void draw();
 
     //setters:
+
     void setPosition(const float& x, const float& y);
     void setHoverColor(const sf::Color& color);
     void setPosition(const sf::Vector2f& pos);
     void setColor(const sf::Color& color);
     void setFont(const sf::Font& font);
     void setText(const wchar_t* text);
+    void setWasClicked(bool c);
 
     //getters:
     sf::FloatRect getCollision();
@@ -37,6 +39,7 @@ public:
     sf::Color getHoverColor();
     const sf::Font* getFont();
     std::wstring getText();
+    bool getWasClicked();
 };
 
 #endif // TEXTBUTTON_H_INCLUDED
