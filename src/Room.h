@@ -7,9 +7,16 @@
 
 class Room{
 private:
-    std::vector<Item> items; //vector of items in the room.
     int tileGrid[32][18];    //grid of tiles, the tiles are stored by their unique item IDs.
+
+    //when walking off screen in game, the RoomBuilder class will
+    //change the room index based on these numbers so that it's like
+    //you go into a different room when you leave the current one:
+    int leftNeighbor, RightNeighbor, UpNeighbor, DownNeighbor;
+
 public:
+    std::vector<Item> items; //vector of items in the room.
+
     Room(); //default constructor for a Room
 
     //sets the tile at a certain position in the room,

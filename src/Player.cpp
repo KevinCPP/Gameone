@@ -106,6 +106,31 @@ bool Player::testCollision(Room* r){
             }
         }
     }
+
+    sf::FloatRect p = player.getGlobalBounds();
+    nextRoom = noNext;
+
+    if(p.left < 0){
+        nextRoom = roomLeft;
+        player.setPosition(Engine::xResolution-p.width, player.getPosition().y);
+        pos = player.getPosition();
+    }
+    if((p.left + p.width) > Engine::xResolution){
+        nextRoom = roomRight;
+        player.setPosition(0, player.getPosition().y);
+        pos = player.getPosition();
+    }
+    if(p.top < 0){
+        nextRoom = roomUp;
+        player.setPosition(player.getPosition().x, Engine::yResolution-p.height);
+        pos = player.getPosition();
+    }
+    if((p.top + p.height) > Engine::yResolution){
+        nextRoom = roomDown;
+        player.setPosition(player.getPosition().x, 0);
+        pos = player.getPosition();
+    }
+
     return false;
 }
 
@@ -254,6 +279,18 @@ void Player::ItemAttributes(int id){
             break;
         case 3: //potion of healing
             healHP(10);
+            removeItem(id);
+            break;
+        case 4: //ultra potion of mana
+            healSP(50);
+            removeItem(id);
+            break;
+        case 5: //super potion of mana
+            healSP(25);
+            removeItem(id);
+            break;
+        case 6: //potion of mana
+            healSP(10);
             removeItem(id);
             break;
     }

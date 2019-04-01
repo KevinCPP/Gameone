@@ -1,3 +1,5 @@
+#include <ostream>
+#include <fstream>
 #include "main.h"
 #include "Engine.h"
 #include "Materials.h"
@@ -24,14 +26,9 @@ int main(){
     HeadsUpDisplay::initialize(10, 5, 10, 5);
 
     RoomBuilder r;
+    r.loadRooms();
     Player p(10, 5, sf::Vector2f(480, 400));
     p.setMoney(1000);
-
-    sf::Texture tex;
-    tex.loadFromFile("Textures\\Item_Sword.png");
-
-    Item I(&tex, sf::Vector2f(400, 400), 0, Item::Weapon, 100);
-    r.getCurrentRoom()->addItem(I);
 
     gpWindow->setFramerateLimit(60);
 
@@ -46,6 +43,7 @@ int main(){
 
         r.placeBlock();
         r.placeItem();
+        r.menu(&p);
         r.draw();
 
         Control c(sf::Mouse::Right);
@@ -57,6 +55,8 @@ int main(){
 
         gpWindow->display();
     }
+
+    r.saveRooms();
 
     Materials::unloadMaterials();
 }

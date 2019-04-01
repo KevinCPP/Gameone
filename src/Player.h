@@ -60,6 +60,19 @@ private:
 
     void setRotation();
 public:
+
+    //Enum to store the direction of the next room
+    //when the player goes off screen. This will be
+    //used so that when the player walks off screen,
+    //they go into a new room:
+    enum nextRoomDirection{
+        roomUp,
+        roomDown,
+        roomLeft,
+        roomRight,
+        noNext
+    } nextRoom = noNext;
+
     //constructor for the player, initializes maxHP, maxSP, and their position:
     Player(int maxhp, int maxsp, sf::Vector2f position);
 

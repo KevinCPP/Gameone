@@ -7,7 +7,7 @@ Room::Room(){
     Materials::loadMaterials();
     for(int i = 0; i < Engine::tilesX; i++){
         for(int k = 0; k < Engine::tilesY; k++){
-            tileGrid[i][k] = 0;
+            tileGrid[i][k] = 2; //initialize all tiles to sand floor
         }
     }
 }
