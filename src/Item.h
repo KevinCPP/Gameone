@@ -2,6 +2,7 @@
 #define ITEMS_H_INCLUDED
 
 #include <SFML/Graphics.hpp>
+#include <ostream>
 
 class Item{
 private:
@@ -37,14 +38,18 @@ public:
          Item_Type type,            //initializes the item's type (see: Item_Type)
          const int& v);             //initializes the item's value.
 
+    //ostream operator overload:
+    friend std::ostream& operator<< (std::ostream& o, const Item& item);
+    friend std::istream& operator>> (std::istream& i, Item& item);
+
     //getters:
-    sf::FloatRect getCollision();   //returns the item's collision rectangle.
-    sf::Vector2f getPosition();     //returns the position of the item (real coordinates, x and y)
-    sf::Vector2f getSize();         //returns the item's size length*width.
-    Item_Type getType();            //returns the item's type.
-    int getTypeInt();               //returns the item's type as an int.
-    int getItemID();                //returns the item's unique numeric ID.
-    int getValue();                 //returns the item's value.
+    sf::FloatRect getCollision() const;   //returns the item's collision rectangle.
+    sf::Vector2f getPosition() const;     //returns the position of the item (real coordinates, x and y)
+    sf::Vector2f getSize() const;         //returns the item's size length*width.
+    Item_Type getType() const;            //returns the item's type.
+    int getTypeInt() const;               //returns the item's type as an int.
+    int getItemID() const;                //returns the item's unique numeric ID.
+    int getValue() const;                 //returns the item's value.
 
 
     //setters:

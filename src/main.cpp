@@ -25,7 +25,7 @@ int main(){
     Materials::loadMaterials();
     HeadsUpDisplay::initialize(10, 5, 10, 5);
 
-    RoomBuilder r;
+    RoomBuilder r("GameData\\DefaultMapRoomBuilder.klvl");
     r.loadRooms();
     Player p(10, 5, sf::Vector2f(480, 400));
     p.setMoney(1000);
@@ -43,8 +43,8 @@ int main(){
 
         r.placeBlock();
         r.placeItem();
-        r.menu(&p);
         r.draw();
+        r.menu(&p);
 
         Control c(sf::Mouse::Right);
 

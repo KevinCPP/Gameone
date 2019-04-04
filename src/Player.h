@@ -33,6 +33,10 @@ private:
     //passed, accepts the memory address of the room:
     bool testCollision(Room* r);
 
+    //checks the player's coordinates to see if they went off screen,
+    //changes nextRoom var accordingly:
+    void checkNextRoom();
+
     //tests if the player is colliding with any items
     //in the room, accepts the memory address of the room
     bool checkForItems(Room* r);

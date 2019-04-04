@@ -87,6 +87,7 @@ void Player::control(Room* r){
         menu();
 
     checkForItems(r);
+    checkNextRoom();
 }
 
 /**
@@ -96,8 +97,8 @@ void Player::control(Room* r){
 * otherwise it returns false
 **/
 bool Player::testCollision(Room* r){
-    for(int x = 0; x < 32; x++){
-        for(int y = 0; y < 18; y++){
+    for(int x = 0; x < Engine::tilesX; x++){
+        for(int y = 0; y < Engine::tilesY; y++){
             sf::FloatRect tile = sf::FloatRect(sf::Vector2f(x*40, y*40), sf::Vector2f(40, 40));
             sf::FloatRect p = player.getGlobalBounds();
 
@@ -106,7 +107,17 @@ bool Player::testCollision(Room* r){
             }
         }
     }
+    return false;
+}
 
+/**
+* this method get's the player's position and checks if their rectangle
+* is going off screen, if it is going off screen to the right, it changes
+* nextRoom to roomRight, if it's going off screen to the left, it changes nextRoom
+* to roomLeft, if it's going off screen at the top, it changes nextRoom to roomUp,
+* if it's going off screen at the bottom, it changes nextRoom to roomBottom
+**/
+void Player::checkNextRoom(){
     sf::FloatRect p = player.getGlobalBounds();
     nextRoom = noNext;
 
@@ -130,8 +141,6 @@ bool Player::testCollision(Room* r){
         player.setPosition(player.getPosition().x, 0);
         pos = player.getPosition();
     }
-
-    return false;
 }
 
 void Player::menu(){

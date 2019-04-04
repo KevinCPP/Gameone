@@ -8,6 +8,7 @@ namespace Engine{
 
     const uint16_t tilesX = 32; //number of tiles horizontally in each room
     const uint16_t tilesY = 18; //number of tiles vertically in each room
+
     unsigned int xResolution, yResolution;
 
     void initialize(const sf::VideoMode& videoMode, const wchar_t* title){

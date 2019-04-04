@@ -1,5 +1,8 @@
 #include "Item.h"
 #include "Engine.h"
+#include "Utility.h"
+#include "Materials.h"
+#include <sstream>
 
 Item::Item(const sf::Texture* tx, const sf::Vector2f& pos, const int& iID, Item_Type type, const int& v){
     itemTexture = *tx;
@@ -18,32 +21,45 @@ Item::Item(const int& iID){
     collected = false;
 }
 
-sf::FloatRect Item::getCollision(){
+std::ostream& operator<< (std::ostream& o, const Item& item){
+    o << "ID: " << item.getItemID()
+      << " x: " << item.getPosition().x
+      << " y: " << item.getPosition().y << std::endl;
+
+    return o;
+}
+
+std::istream& operator>> (std::istream& i, Item& item){
+    i >> item.itemID >> item.position.x >> item.position.y;
+    return i;
+}
+
+sf::FloatRect Item::getCollision() const {
     return itemSprite.getGlobalBounds();
 }
 
-sf::Vector2f Item::getPosition(){
+sf::Vector2f Item::getPosition() const {
     return itemSprite.getPosition();
 }
 
-sf::Vector2f Item::getSize(){
+sf::Vector2f Item::getSize() const {
     sf::FloatRect r = itemSprite.getGlobalBounds();
     return sf::Vector2f(r.width, r.height);
 }
 
-Item::Item_Type Item::getType(){
+Item::Item_Type Item::getType() const {
     return itemType;
 }
 
-int Item::getTypeInt(){
+int Item::getTypeInt() const {
     return (int)itemType;
 }
 
-int Item::getItemID(){
+int Item::getItemID() const {
     return itemID;
 }
 
-int Item::getValue(){
+int Item::getValue() const {
     return value;
 }
 

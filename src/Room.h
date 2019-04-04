@@ -7,17 +7,20 @@
 
 class Room{
 private:
-    int tileGrid[32][18];    //grid of tiles, the tiles are stored by their unique item IDs.
 
-    //when walking off screen in game, the RoomBuilder class will
-    //change the room index based on these numbers so that it's like
-    //you go into a different room when you leave the current one:
-    int leftNeighbor, RightNeighbor, UpNeighbor, DownNeighbor;
+    //number of tiles X and Y:
+    static const int tilesX = 32, tilesY = 18;
 
-public:
+    int tileGrid[tilesX][tilesY];    //grid of tiles, the tiles are stored by their unique item IDs.
+
     std::vector<Item> items; //vector of items in the room.
+public:
+
 
     Room(); //default constructor for a Room
+
+    friend std::ostream& operator<< (std::ostream& o, const Room& room);
+    friend std::istream& operator>> (std::istream& i, Room& room);
 
     //sets the tile at a certain position in the room,
     //x and y are room coordinates not actual coordinates.
@@ -26,7 +29,7 @@ public:
 
     //returns whatever tile ID is at the x and y passed,
     //x and y are room coordinates not actual coordinates.
-    int getTile(uint32_t x, uint32_t y);
+    int getTile(uint32_t x, uint32_t y) const;
 
     //adds an Item object to the items vector.
     void addItem(const Item& i);
@@ -35,12 +38,12 @@ public:
     void removeItem(const int& index);
 
     //gets an item from the vector by index.
-    Item getItem(const int& index);
+    Item getItem(const int& index) const;
 
     //loops through the vector of items and returns the index
     //of any item that intersects with collision, if there are
     //no items that intersect, it returns -1.
-    int checkForItemCollision(sf::FloatRect collision);
+    int checkForItemCollision(sf::FloatRect collision) const;
 
     void draw(); //draws every tile in the room to the screen.
 };

@@ -6,10 +6,11 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <iterator>
 #include <fstream>
 #include <ios>
 
-RoomBuilder::RoomBuilder(){
+RoomBuilder::RoomBuilder(const std::string& saveFile){
     for(int i = 0; i < Materials::numMaterials; i++){
 
         std::wstring title = std::wstring(Materials::materials[i].begin(), Materials::materials[i].end());
@@ -32,6 +33,8 @@ RoomBuilder::RoomBuilder(){
     rY = 0;
 
     c.setButton(sf::Mouse::Right);
+
+    saveFileName = saveFile;
 }
 
 void RoomBuilder::ChangeCurrentBlock(uint32_t i){
@@ -72,6 +75,7 @@ void RoomBuilder::menu(Player* p){
     else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Delete))
         menuVisible = false;
 
+
     if(menuVisible){
         for(uint32_t i = 0; i < tileButtons.size(); i++){
             tileButtons[i].draw();
@@ -94,7 +98,7 @@ void RoomBuilder::menu(Player* p){
     switch(p->nextRoom){
         case Player::roomLeft:
             if(rX-1 >= 0)
-                rX--;
+                ChangeCurrentRoom(rX-1, rY);
 
             std::cout << "going left: " << rX << " " << rY;
 
@@ -103,7 +107,7 @@ void RoomBuilder::menu(Player* p){
             break;
         case Player::roomRight:
             if(rX+1 < roomsX)
-                rX++;
+                ChangeCurrentRoom(rX+1, rY);
 
             std::cout << "going right: " << rX << " " << rY;
 
@@ -112,7 +116,7 @@ void RoomBuilder::menu(Player* p){
             break;
         case Player::roomDown:
             if(rY+1 < roomsY)
-                rY++;
+                ChangeCurrentRoom(rX, rY+1);
 
             std::cout << "going down: " << rX << " " << rY;
 
@@ -121,7 +125,7 @@ void RoomBuilder::menu(Player* p){
             break;
         case Player::roomUp:
             if(rY-1 >= 0)
-                rY--;
+                ChangeCurrentRoom(rX, rY-1);
 
             std::cout << "going up: " << rX << " " << rY;
 
@@ -144,120 +148,108 @@ Room* RoomBuilder::getCurrentRoom(){
 //each room and every single item in them as well:
 bool RoomBuilder::saveRooms(){
     //open the output file to save the rooms to:
-    std::ofstream out("GameData\\DefaultMapRoomBuilder.klvl");
+    std::ofstream out(saveFileName);
 
+    //loop through columns of rooms:
     for(int x = 0; x < roomsX; x++){
+        //loop through rows of rooms:
         for(int y = 0; y < roomsY; y++){
-
-            out << "Tiles: ";
-            for(int j = 0; j < 32; j++){
-                for(int k = 0; k < 18; k++){
-                    out << rooms[x][y].getTile(j, k) << " ";
-                }
-            }
-            out << "\n";
-
-            //save the items and their positions to the room:
-
-            for(int j = 0; j < rooms[x][y].items.size(); j++){
-                int itemID = rooms[x][y].items.at(j).getItemID();
-                float xPos = rooms[x][y].items.at(j).getPosition().x;
-                float yPos = rooms[x][y].items.at(j).getPosition().y;
-
-                out << "ID: " << itemID << " " << xPos << " " << yPos << std::endl;
-            }
-
-            //text to signify the end of the room:
-            out << "\nEND_OF_ROOM\n";
+            //save the room to the file:
+            out << rooms[x][y];
         }
     }
-    return true;
+
+    //close the file now that all the rooms have been saved:
+    out.close();
 }
 
 bool RoomBuilder::loadRooms(){
-    std::ifstream in("GameData\\DefaultMapRoomBuilder.klvl");
+    std::ifstream in(saveFileName);
 
-    std::vector<std::string> lines;
+    //convert the ifstream into a stringstream
+    //so that it can be split up at each occurance
+    //of "END_OF_ROOM":
+    std::ostringstream ss;
+    std::copy(std::istreambuf_iterator<char>(in),
+              std::istreambuf_iterator<char>(),
+              std::ostreambuf_iterator<char>(ss));
 
-    //only happens if input stream is open:
-    if(in.is_open()){
-        //string to store the current line we're on:
-        std::string line;
+    //convert the stringstream into a string:
+    std::string ssStr = ss.str();
 
-        //while loop to loop through each line:
-        while(std::getline(in, line)){
-            //add each line to the lines vector:
-            lines.push_back(line);
-        }
-        //close the file now that we no longer need it:
-        in.close();
+    //vector that will store a string containing each
+    //room's info, split at every occurrence of the
+    //delimiter, "END_OF_ROOM"
+    std::vector<std::string> split;
+
+    //delimiter definition:
+    std::string delimiter = "END_OF_ROOM";
+
+    //token to store the current string that
+    //just got split:
+    std::string token;
+
+    //stores the position of the delimiter:
+    size_t pos = 0;
+
+    //loop through the string that contains the entire stringstream
+    //until the delimiter is not found anymore, and set pos equal
+    //to the first occurrence of the delimiter:
+    while((pos = ssStr.find(delimiter)) != std::string::npos){
+        //make a substring from the beginning of the split until the delimiter
+        //is found, and store that in token:
+        token = ssStr.substr(0, pos);
+
+        //add token the the split vector:
+        split.push_back(token);
+
+        //erase the delimiter from that position so that we don't
+        //keep getting the same split every time, this makes it find the
+        //NEXT delimiter, because now the next one will be the first occurrence:
+        ssStr.erase(0, pos+delimiter.length());
     }
 
-    int cX = 0, cY = 0;
+    //print the size of the split vector, AKA how many
+    //delimiters were found, or how many room's info
+    //were in the file:
+    std::cout << "size split: " << split.size();
 
-    for(int i = 0; i < lines.size(); i++){
-        std::cout << lines.at(i) << std::endl;
+    ///map each room's info in the split vector to a room in the matrix:
 
-        if(lines.at(i).find("END_OF_ROOM") != std::string::npos){
+    //store the current index of split:
+    int splitIndex = 0;
 
+    //loop through rooms matrix columns:
+    for(int x = 0; x < roomsX; x++){
+        //loop through rooms matrix rows:
+        for(int y = 0; y < roomsY; y++){
 
+            //make sure that there is room data to
+            //be loaded:
+            if(splitIndex < split.size()){
+                //convert the string in split at splitIndex to
+                //a stringstream so that a room can be extracted
+                //from it:
+                std::stringstream strstr(split.at(splitIndex));
 
-            if(cY+1 < roomsY)
-                cY++;
-            else if(cX+1 < roomsX)
-                cX++;
+                //use the room's extraction operator to extract
+                //it's information from strstr:
+                strstr >> rooms[x][y];
 
-            std::cout << "loaded room at iteration: " << i << std::endl;
-        }
-        else if(lines.at(i).find("Tiles:") != std::string::npos){
-            std::vector<int> tiles = parseIntsFromString(lines.at(i));
-            std::cout << "got here";
-
-            int tIndex = 0;
-            for(int x = 0; x < 32; x++){
-                for(int y = 0; y < 18; y++){
-                    rooms[cX][cY].setTile(x, y, tiles[tIndex]);
-                    tIndex++;
-                }
+                //increment splitindex to move on to the next room's info now
+                //that this room has been loaded:
+                splitIndex++;
+            } else {
+                std::cerr << "Error: no room data to be loaded at split index: " << splitIndex
+                        << " for room: " << "x - " << x << " | " << "y - " << y << "\n";
             }
-            std::cout << "got here" << " cx: " << cX << " cy: " << cY << std::endl;
-        }
-        else if(lines.at(i).find("ID:") != std::string::npos){
-            std::vector<int> itemInfo = parseIntsFromString(lines.at(i));
-
-            Item I = *Materials::getItem(itemInfo[0]);
-            I.setPosition(sf::Vector2f(itemInfo[1], itemInfo[2]));
-
-            rooms[cX][cY].addItem(I);
-
-            std::cout << "added item at iteration: " << i << std::endl;
         }
     }
-    return true;
-}
 
-std::vector<int> RoomBuilder::parseIntsFromString(const std::string& str){
-    std::vector<int> ints;
-
-    std::stringstream ss;
-    ss << str;
-
-    std::string temp;
-    int found;
-
-    while(!ss.eof()){
-        ss >> temp;
-
-        if(std::stringstream(temp) >> found)
-            ints.push_back(found);
-
-        temp = "";
-    }
-
-    return ints;
+    //close the file now that the rooms have all been loaded:
+    in.close();
 }
 
 void RoomBuilder::draw(){
     rooms[rX][rY].draw();
-    //menu();
 }

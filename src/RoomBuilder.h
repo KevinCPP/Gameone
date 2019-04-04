@@ -35,11 +35,11 @@ private:
     bool menuVisible;                    //boolean to determine if the menu for changing tiles is visible.
     Control c;                           //control for the right mouse which can be polled (for placing items)
 
-    std::vector<int> parseIntsFromString(const std::string& str);
+    std::string saveFileName;            //string to store the file name and it's path where we will save/load rooms from.
 public:
     Room rooms[roomsX][roomsY];             //vector that stores the room.
 
-    RoomBuilder(); //default constructor
+    RoomBuilder(const std::string& saveFileName); //default constructor
 
     bool saveRooms(); //will save the rooms vector to a file.
     bool loadRooms(); //will load the rooms vector from a file.
