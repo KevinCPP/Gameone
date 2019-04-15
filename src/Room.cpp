@@ -7,8 +7,8 @@
 
 Room::Room(){
     Materials::loadMaterials();
-    for(int i = 0; i < Engine::tilesX; i++){
-        for(int k = 0; k < Engine::tilesY; k++){
+    for(int i = 0; i < Room::tilesX; i++){
+        for(int k = 0; k < Room::tilesY; k++){
             tileGrid[i][k] = 2; //initialize all tiles to sand floor
         }
     }
@@ -34,7 +34,6 @@ std::ostream& operator<< (std::ostream& o, const Room& room){
 std::istream& operator>> (std::istream& i, Room& room){
     //loop through each line in the istream:
     for(std::string line; std::getline(i, line); ){
-
         //if the line contains "Tiles:" we parse all
         //of the ints out which are the tileIDs for
         //the room's tiles:
@@ -105,12 +104,12 @@ std::istream& operator>> (std::istream& i, Room& room){
 }
 
 void Room::setTile(uint32_t x, uint32_t y, int tileID){
-    if(x < Engine::tilesX && y < Engine::tilesY)
+    if(x < Room::tilesX && y < Room::tilesY)
         tileGrid[x][y] = tileID;
 }
 
 int Room::getTile(uint32_t x, uint32_t y) const{
-    if(x < Engine::tilesX && y < Engine::tilesY){
+    if(x < tilesX && y < tilesY){
         return tileGrid[x][y];
     } else {
         return 0;
@@ -138,9 +137,29 @@ int Room::checkForItemCollision(sf::FloatRect collision) const {
     return -1;
 }
 
+/**
+* this function takes a FloatRect, and checks every tile
+* in the room to see if the test FloatRect intersects with
+* any that have collision, if it does then it returns true,
+* otherwise it returns false.
+**/
+bool Room::checkForTileCollision(sf::FloatRect test) const {
+    for(int x = 0; x < Room::tilesX; x++){
+        for(int y = 0; y < Room::tilesY; y++){
+            sf::FloatRect tile = sf::FloatRect(sf::Vector2f(x*Engine::TILE_SIZE_X, y*Engine::TILE_SIZE_Y),
+                                               sf::Vector2f(Engine::TILE_SIZE_X, Engine::TILE_SIZE_Y));
+
+            if(tile.intersects(test) && Materials::getTile(tileGrid[x][y])->hasCollision()){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 void Room::draw(){
-    for(int i = 0; i < Engine::tilesX; i++){
-        for(int k = 0; k < Engine::tilesY; k++){
+    for(int i = 0; i < tilesX; i++){
+        for(int k = 0; k < tilesY; k++){
             Tile* t = Materials::getTile(tileGrid[i][k]);
             t->setRoomCoordinates(i, k);
             t->draw();

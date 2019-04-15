@@ -1,25 +1,34 @@
 #include "Engine.h"
 #include "HeadsUpDisplay.h"
+#include "Room.h"
 
 namespace Engine{
     std::unique_ptr<sf::Clock>          gpFramerateClock;
     std::unique_ptr<sf::RenderWindow>   gpWindow;
     std::unique_ptr<sf::Font>           gpFont;
 
-    const uint16_t tilesX = 32; //number of tiles horizontally in each room
-    const uint16_t tilesY = 18; //number of tiles vertically in each room
+    const unsigned int xResolution = 1600, yResolution = 900;
 
-    unsigned int xResolution, yResolution;
+    const uint32_t TILE_SIZE_X = calc_tile_size_x();
+    const uint32_t TILE_SIZE_Y = calc_tile_size_y();
 
-    void initialize(const sf::VideoMode& videoMode, const wchar_t* title){
-        gpWindow = std::make_unique<sf::RenderWindow>(videoMode, title, sf::Style::Close | sf::Style::Titlebar);
+    const std::string TextureFilePath = "Textures\\";
+    const std::string GameDataFilePath = "GameData\\";
+
+    void initialize(const wchar_t* title){
+        gpWindow = std::make_unique<sf::RenderWindow>(sf::VideoMode(xResolution, yResolution), title, sf::Style::Close | sf::Style::Titlebar);
         gpFramerateClock = std::make_unique<sf::Clock>();
         gpFont = std::make_unique<sf::Font>();
 
         gpFont->loadFromFile("arial.ttf");
+    }
 
-        xResolution = videoMode.width;
-        yResolution = videoMode.height;
+    constexpr uint32_t calc_tile_size_x(){
+        return Engine::xResolution/Room::tilesX;
+    }
+
+    constexpr uint32_t calc_tile_size_y(){
+        return Engine::yResolution/Room::tilesY;
     }
 
     inline double getFramerate(){

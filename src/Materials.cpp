@@ -1,4 +1,5 @@
 #include "Materials.h"
+#include "Engine.h"
 #include "Tile.h"
 #include "Item.h"
 #include <string>
@@ -79,8 +80,8 @@ namespace Materials{
             tiles[i] = new Tile(materials[i].c_str(), i, collision, 0);
 
             sf::Texture tx;
-            if(!tx.loadFromFile("Textures\\" + materials[i] + ".png"))
-                tx.loadFromFile("Textures\\missingTexture.png");
+            if(!tx.loadFromFile(Engine::TextureFilePath + materials[i] + ".png"))
+                tx.loadFromFile(Engine::TextureFilePath + "missingTexture.png");
 
             tiles[i]->setTexture(&tx);
         }
@@ -92,8 +93,8 @@ namespace Materials{
             items[i]->setItemType(itemTypes[i]);
 
             sf::Texture tx;
-            if(!tx.loadFromFile("Textures\\" + itemNames[i] + ".png"))
-                tx.loadFromFile("Textures\\missingTexture.png");
+            if(!tx.loadFromFile(Engine::TextureFilePath + itemNames[i] + ".png"))
+                tx.loadFromFile(Engine::TextureFilePath + "missingTexture.png");
 
             items[i]->setTexture(&tx);
         }

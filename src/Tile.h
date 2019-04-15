@@ -14,8 +14,6 @@ private:
     bool     interactable;  //can you interact with the tile?
     bool     collision;     //does the tile have collision?
     uint32_t itemID;        //a numeric ID to represent the tile
-    uint16_t height;        //height of the tile (y axis pixels)
-    uint16_t width;         //width of the tile (x axis pixels)
 
 public:
 

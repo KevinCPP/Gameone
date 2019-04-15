@@ -26,8 +26,6 @@ private:
     std::vector<TextButton> tileButtons; //vector of buttons, one button for each different tile.
     std::vector<TextButton> itemButtons; //vector of buttons, one button for each different item.
 
-    const static int roomsX = 8, roomsY = 8;
-
     uint32_t rX;                         //current column of rooms you are in
     uint32_t rY;                         //current row of rooms you are in
     int currentBlock;                    //current block you are placing (changed with tileButtons)
@@ -37,17 +35,18 @@ private:
 
     std::string saveFileName;            //string to store the file name and it's path where we will save/load rooms from.
 public:
-    Room rooms[roomsX][roomsY];             //vector that stores the room.
+    const static int roomsX = 8, roomsY = 8; //stores the amount of rooms in the map on the horizontal and vertical axises.
+
+    Room rooms[roomsX][roomsY]; //vector that stores the room.
 
     RoomBuilder(const std::string& saveFileName); //default constructor
 
     bool saveRooms(); //will save the rooms vector to a file.
     bool loadRooms(); //will load the rooms vector from a file.
 
-    void ChangeCurrentRoom(uint32_t x, uint32_t y);  //method to change the current room you are in (changes currentRoomIndex)
+    void ChangeCurrentRoom(uint32_t x, uint32_t y);  //method to change the current room you are in
     void ChangeCurrentBlock(uint32_t i);             //method to change the current tile you are placing (uses tile's unique item ID)
     void changeCurrentItem(uint32_t i);              //method to change the current item you are placing (uses item's ID)
-    void CreateNewRoom();                            //adds a new room to the rooms vector.
     void placeBlock();                               //places a block where the mouse is positioned.
     void placeItem();                                //places an item where the mouse is positioned.
     void restart();                                  //will reset all of the tiles in the room to AIR (item id: 0)

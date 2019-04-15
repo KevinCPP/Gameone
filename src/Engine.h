@@ -8,9 +8,13 @@ namespace Engine{
     extern std::unique_ptr<sf::Clock>           gpFramerateClock;
     extern std::unique_ptr<sf::RenderWindow>    gpWindow;
     extern std::unique_ptr<sf::Font>            gpFont;
-    extern unsigned int xResolution, yResolution;
+    extern const unsigned int xResolution, yResolution;
 
-    extern const uint16_t tilesX, tilesY;
+    extern const uint32_t TILE_SIZE_Y;
+    extern const uint32_t TILE_SIZE_X;
+
+    extern const std::string TextureFilePath;
+    extern const std::string GameDataFilePath;
 
     /*
     * initializes the engine, the engine will
@@ -18,10 +22,13 @@ namespace Engine{
     * first, should be called at the beginning
     * of main.cpp.
     */
-    void initialize(const sf::VideoMode& videoMode, const wchar_t* title);
+    void initialize(const wchar_t* title);
 
-    //returns the framerate in gpWindow.
-    double getFramerate();
+    constexpr uint32_t calc_tile_size_x();
+    constexpr uint32_t calc_tile_size_y();
+
+    //returns the frame rate in gpWindow.
+    inline double getFramerate();
 
     //returns the local mouse position relative to gpWindow.
     sf::Vector2f getMousePos();

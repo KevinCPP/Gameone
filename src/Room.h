@@ -6,16 +6,10 @@
 #include "Item.h"
 
 class Room{
-private:
+public:
 
     //number of tiles X and Y:
     static const int tilesX = 32, tilesY = 18;
-
-    int tileGrid[tilesX][tilesY];    //grid of tiles, the tiles are stored by their unique item IDs.
-
-    std::vector<Item> items; //vector of items in the room.
-public:
-
 
     Room(); //default constructor for a Room
 
@@ -45,7 +39,15 @@ public:
     //no items that intersect, it returns -1.
     int checkForItemCollision(sf::FloatRect collision) const;
 
+    //loops through every tile in the room and returns true
+    //if the test FloatRect intersects with any tile that
+    //has collision.
+    bool checkForTileCollision(sf::FloatRect test) const;
+
     void draw(); //draws every tile in the room to the screen.
+private:
+    int tileGrid[tilesX][tilesY];    //grid of tiles, the tiles are stored by their unique item IDs.
+    std::vector<Item> items; //vector of items in the room.
 };
 
 #endif // ROOM_H_INCLUDED

@@ -1,21 +1,15 @@
 #include "Tile.h"
 #include "Engine.h"
+#include "Room.h"
 
 //constructors:
-
 Tile::Tile(const char* name, const uint32_t& ID, bool solid, bool interact){
     tileName = name;
     itemID = ID;
     collision = solid;
     interactable = interact;
 
-    float tileWidth = Engine::xResolution/Engine::tilesX;
-    float tileHeight = Engine::yResolution/Engine::tilesY;
-
-    width = tileWidth;
-    height = tileHeight;
-
-    tile.setSize(sf::Vector2f(tileWidth, tileHeight));
+    tile.setSize(sf::Vector2f(Engine::TILE_SIZE_X, Engine::TILE_SIZE_Y));
 }
 
 Tile::Tile(const char* name, const uint32_t& ID, bool solid, bool interact, const sf::Texture* tx){
@@ -24,10 +18,7 @@ Tile::Tile(const char* name, const uint32_t& ID, bool solid, bool interact, cons
     collision = solid;
     interactable = interact;
 
-    float tileWidth = Engine::xResolution/Engine::tilesX;
-    float tileHeight = Engine::yResolution/Engine::tilesY;
-
-    tile.setSize(sf::Vector2f(tileWidth, tileHeight));
+    tile.setSize(sf::Vector2f(Engine::TILE_SIZE_X, Engine::TILE_SIZE_Y));
     texture = *tx;
     tile.setTexture(&texture);
 }
@@ -35,7 +26,7 @@ Tile::Tile(const char* name, const uint32_t& ID, bool solid, bool interact, cons
 //setter methods:
 
 void Tile::setRoomCoordinates(const uint16_t& x, const uint16_t& y){
-    tile.setPosition(sf::Vector2f(x*width, y*height));
+    tile.setPosition(sf::Vector2f(x*Engine::TILE_SIZE_X, y*Engine::TILE_SIZE_Y));
 }
 
 void Tile::setTexture(const sf::Texture* tx){

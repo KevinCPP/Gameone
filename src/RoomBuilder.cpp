@@ -8,11 +8,9 @@
 #include <iostream>
 #include <iterator>
 #include <fstream>
-#include <ios>
 
 RoomBuilder::RoomBuilder(const std::string& saveFile){
     for(int i = 0; i < Materials::numMaterials; i++){
-
         std::wstring title = std::wstring(Materials::materials[i].begin(), Materials::materials[i].end());
 
         TextButton t(sf::Vector2f(5, (i+1)*24), sf::Color::Cyan, sf::Color::Red, title.c_str(), 20);
@@ -21,7 +19,7 @@ RoomBuilder::RoomBuilder(const std::string& saveFile){
 
     for(int i = 0; i < Materials::numItems; i++){
         std::wstring title = std::wstring(Materials::itemNames[i].begin(), Materials::itemNames[i].end());
-        TextButton t(sf::Vector2f(1200, (i+1)*24), sf::Color::Cyan, sf::Color::Red, title.c_str(), 20);
+        TextButton t(sf::Vector2f(Engine::xResolution - 250, (i+1)*24), sf::Color::Cyan, sf::Color::Red, title.c_str(), 20);
         itemButtons.push_back(t);
     }
 
@@ -46,9 +44,11 @@ void RoomBuilder::changeCurrentItem(uint32_t i){
 }
 
 void RoomBuilder::ChangeCurrentRoom(uint32_t x, uint32_t y){
-    if(x >= roomsX || y >= roomsY)
-        return;
-    else{
+    if(x >= roomsX || y >= roomsY){
+        std::cerr << "Invalid room coordinates - x: " << x << " y: " << y << std::endl
+                << "Accepted x ranges from 0 - " << roomsX-1 << std::endl
+                << "Accepted y ranges from 0 - " << roomsY-1 << std::endl;
+    } else {
         rX = x;
         rY = y;
     }
@@ -136,8 +136,8 @@ void RoomBuilder::menu(Player* p){
 }
 
 sf::Vector2i RoomBuilder::getCursorTile(){
-    return sf::Vector2i(Engine::getMousePos().x/40,
-                        Engine::getMousePos().y/40);
+    return sf::Vector2i(Engine::getMousePos().x/Engine::TILE_SIZE_X,
+                        Engine::getMousePos().y/Engine::TILE_SIZE_Y);
 }
 
 Room* RoomBuilder::getCurrentRoom(){
@@ -223,7 +223,6 @@ bool RoomBuilder::loadRooms(){
     for(int x = 0; x < roomsX; x++){
         //loop through rooms matrix rows:
         for(int y = 0; y < roomsY; y++){
-
             //make sure that there is room data to
             //be loaded:
             if(splitIndex < split.size()){

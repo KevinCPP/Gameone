@@ -13,14 +13,19 @@
 Player::Player(int maxhp, int maxsp, sf::Vector2f position){
     player.setPosition(position);
     pos = player.getPosition();
-    playerTextureU.loadFromFile("Textures\\playerModelU.png");
-    playerTextureD.loadFromFile("Textures\\playerModelD.png");
-    playerTextureL.loadFromFile("Textures\\playerModelL.png");
-    playerTextureR.loadFromFile("Textures\\playerModelR.png");
+    playerTextureU.loadFromFile(Engine::TextureFilePath + "playerModelU.png");
+    playerTextureD.loadFromFile(Engine::TextureFilePath + "playerModelD.png");
+    playerTextureL.loadFromFile(Engine::TextureFilePath + "playerModelL.png");
+    playerTextureR.loadFromFile(Engine::TextureFilePath + "playerModelR.png");
     player.setTexture(playerTextureU);
 
+    player.setScale(Engine::TILE_SIZE_X/40.0f, Engine::TILE_SIZE_Y/40.0f);
+    sf::FloatRect debugRect = player.getGlobalBounds();
+//    std::cout << "top: " << debugRect.top << "left: " << debugRect.left
+//              << "width: " << debugRect.width << "height: " << debugRect.height << std::endl;
+
     money = 0;
-    speed = 4;
+    speed = Engine::TILE_SIZE_X/10.0f;
     maxHP = maxhp;
     maxSP = maxsp;
     HP = maxhp;
@@ -42,45 +47,48 @@ void Player::control(Room* r){
     if(openMenu.pollKey())
         menuOpen = !menuOpen;
 
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
+    if(sf::Keyboard::isKeyPressed(keybinds.moveUp)){
         pos.y -= speed;
         player.setPosition(pos);
         currentDirection = up;
 
-        if(testCollision(r)){
+        if(r->checkForTileCollision(player.getGlobalBounds())){
             pos.y += speed;
             player.setPosition(pos);
         }
     }
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
+    if(sf::Keyboard::isKeyPressed(keybinds.moveDown)){
         pos.y += speed;
         player.setPosition(pos);
         currentDirection = down;
 
-        if(testCollision(r)){
+        if(r->checkForTileCollision(player.getGlobalBounds())){
             pos.y -= speed;
             player.setPosition(pos);
         }
     }
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
+    if(sf::Keyboard::isKeyPressed(keybinds.moveLeft)){
         pos.x -= speed;
         player.setPosition(pos);
         currentDirection = left;
 
-        if(testCollision(r)){
+        if(r->checkForTileCollision(player.getGlobalBounds())){
             pos.x += speed;
             player.setPosition(pos);
         }
     }
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
+    if(sf::Keyboard::isKeyPressed(keybinds.moveRight)){
         pos.x += speed;
         player.setPosition(pos);
         currentDirection = right;
 
-        if(testCollision(r)){
+        if(r->checkForTileCollision(player.getGlobalBounds())){
             pos.x -= speed;
             player.setPosition(pos);
         }
+    }
+    if(sf::Keyboard::isKeyPressed(keybinds.attack)){
+
     }
 
     if(menuOpen)
@@ -90,25 +98,7 @@ void Player::control(Room* r){
     checkNextRoom();
 }
 
-/**
-* this method takes a room pointer, and checks that room
-* to see if the player's position will intersect with any
-* solid tiles, if the player intersects it returns true,
-* otherwise it returns false
-**/
-bool Player::testCollision(Room* r){
-    for(int x = 0; x < Engine::tilesX; x++){
-        for(int y = 0; y < Engine::tilesY; y++){
-            sf::FloatRect tile = sf::FloatRect(sf::Vector2f(x*40, y*40), sf::Vector2f(40, 40));
-            sf::FloatRect p = player.getGlobalBounds();
 
-            if(tile.intersects(p) && Materials::getTile(r->getTile(x, y))->hasCollision()){
-                return true;
-            }
-        }
-    }
-    return false;
-}
 
 /**
 * this method get's the player's position and checks if their rectangle
@@ -151,7 +141,6 @@ void Player::menu(){
 
     //iterate through all the items listed in itemsList:
     for(auto it = ItemsList.begin(); it != ItemsList.end();){
-
         //We do this because in order to delete items
         //from a container using an iterator, you must go
         //past it, then delete the previous element (the one
@@ -357,25 +346,6 @@ bool Player::removeItem(int id){
 /**
 * this method loops through all of the buttons in itemButtons
 * and compares each one's text to the parameter and returns
-* the index of the first one that *CONTAINS* text, if none match it
-* just returns -1:
-**/
-///IMPORTANT: THIS CHECKS IF THE BUTTON *CONTAINS* THE TEXT
-//int Player::ItemButtonsTextSearchC(const std::wstring& text){
-//    if(itemButtons.size() > 0){
-//        for(int i = 0; i < itemButtons.size(); i++){
-//            std::wstring bTxt = itemButtons.at(i).getText();
-//            if(bTxt.find(text) != std::string::npos)
-//                return i;
-//        }
-//    }
-//
-//    return -1;
-//}
-
-/**
-* this method loops through all of the buttons in itemButtons
-* and compares each one's text to the parameter and returns
 * the index of the first one that exactly matches text, if none
 * match it, it just returns -1.
 **/
@@ -489,42 +459,6 @@ void Player::healSP(int s){
         SP = maxSP;
     if(SP < 0)
         SP = 0;
-}
-
-///getters:
-int Player::getHP(){
-    return HP;
-}
-
-int Player::getSP(){
-    return SP;
-}
-
-int Player::getMoney(){
-    return money;
-}
-
-///setters:
-void Player::setMoney(int amount){
-    money = amount;
-}
-
-/**
-* doesn't care about range checking HP,
-* when using this method HP will equal
-* the parameter no matter what
-**/
-void Player::setHP(int hp){
-    HP = hp;
-}
-
-/**
-* doesn't care about range checking SP,
-* when using this method SP will equal
-* the parameter no matter what
-**/
-void Player::setSP(int sp){
-    SP = sp;
 }
 
 ///rotate the player based on the direction they're facing:

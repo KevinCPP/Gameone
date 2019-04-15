@@ -17,21 +17,14 @@ private:
     sf::Texture playerTextureD; //texture for the player's sprite facing down
     sf::Texture playerTextureU; //texture for the player's sprite facing up
 
-    int HP;     //player's Health Points
-    int SP;     //player's Special Points
     int maxHP;  //maximum value for the player's health points
     int maxSP;  //maximum value for the player's special points
-    uint32_t money; //how much money the player has
 
     float speed; //speed the player will move at (pixels per frame)
 
     bool menuOpen;  //boolean which is true when the inventory Menu is open
 
     sf::Vector2f pos; //player's position
-
-    //tests the player's collision in the room that is
-    //passed, accepts the memory address of the room:
-    bool testCollision(Room* r);
 
     //checks the player's coordinates to see if they went off screen,
     //changes nextRoom var accordingly:
@@ -65,6 +58,19 @@ private:
     void setRotation();
 public:
 
+    int HP;     //player's Health Points
+    int SP;     //player's Special Points
+    uint32_t money; //how much money the player has
+
+    struct playerKeybinds{
+        sf::Keyboard::Key moveLeft = sf::Keyboard::A;
+        sf::Keyboard::Key moveRight = sf::Keyboard::D;
+        sf::Keyboard::Key moveUp = sf::Keyboard::W;
+        sf::Keyboard::Key moveDown = sf::Keyboard::S;
+        sf::Keyboard::Key attack = sf::Keyboard::Space;
+        sf::Keyboard::Key interact = sf::Keyboard::F;
+    } keybinds;
+
     //Enum to store the direction of the next room
     //when the player goes off screen. This will be
     //used so that when the player walks off screen,
@@ -94,17 +100,7 @@ public:
     //under maxSP, if SP > maxSP, SP = maxSP:
     void healSP(int s);
 
-    //getters:
-    int ItemButtonsTextSearchC(const std::wstring& text);   //returns the index in itemButtons for a TextButton which *contains* the text parameter
     int ItemButtonsTextSearch(const std::wstring& text);   //returns the index in itemButtons for a TextButton which equals the text parameter
-    int getMoney();                                         //returns the money variable
-    int getHP();                                            //returns the HP variable
-    int getSP();                                            //returns the SP variable
-
-    //setters:
-    void setMoney(int amount);  //sets the money variable
-    void setHP(int hp);         //sets the HP variable
-    void setSP(int sp);         //sets the SP variable
 
     void menu();    //inventory menu, handles all things related to the player's inventory
     void draw();    //draws the player to the screen

@@ -10,6 +10,7 @@
 #include "HeadsUpDisplay.h"
 #include "Item.h"
 #include "Controls.h"
+#include "TextBox.h"
 
 /******************************************
  * THIS GAME WAS DEVELOPED BY KEVIN COSBY *
@@ -20,17 +21,19 @@ int main(){
 
     using namespace Engine;
 
-    initialize(sf::VideoMode(1280, 720), L"test"); //initializes the engine.
+    initialize(L"test"); //initializes the engine.
 
     Materials::loadMaterials();
     HeadsUpDisplay::initialize(10, 5, 10, 5);
 
-    RoomBuilder r("GameData\\DefaultMapRoomBuilder.klvl");
+    RoomBuilder r(Engine::GameDataFilePath + "DefaultMapRoomBuilder.klvl");
     r.loadRooms();
     Player p(10, 5, sf::Vector2f(480, 400));
-    p.setMoney(1000);
 
     gpWindow->setFramerateLimit(60);
+
+    TextBox t;
+    t.setString("WWWWWWWWWWWWWWWWWWWWWWWW.");
 
     while(gpWindow->isOpen()){
         sf::Event event;
@@ -46,12 +49,12 @@ int main(){
         r.draw();
         r.menu(&p);
 
-        Control c(sf::Mouse::Right);
+        t.draw();
 
         p.draw();
         p.control(r.getCurrentRoom());
 
-        HeadsUpDisplay::draw(p.getHP(), p.getSP(), p.getMoney());
+        HeadsUpDisplay::draw(p.HP, p.SP, p.money);
 
         gpWindow->display();
     }

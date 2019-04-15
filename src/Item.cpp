@@ -14,6 +14,12 @@ Item::Item(const sf::Texture* tx, const sf::Vector2f& pos, const int& iID, Item_
 
     itemSprite.setTexture(*tx);
     itemSprite.setPosition(position);
+
+    //Items can have arbitrary sizes, not necessarily the same size as a tile, however,
+    //everything in the game is scaled according to how big the tiles are, if the tiles
+    //are 32x32 then the player is also 32x32, so if tiles are 80% of the default size 40,
+    //then i want items to be 80% of their size too.
+    itemSprite.setScale(Engine::TILE_SIZE_X/40, Engine::TILE_SIZE_Y/40);
 }
 
 Item::Item(const int& iID){
